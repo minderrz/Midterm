@@ -83,7 +83,9 @@ public class Midterm_ArenaTournament : MonoBehaviour
 
     void Start()
     {
-        PrintRoster();
+      PrintRoster();
+    }
+    void PrintRoster()
     {
         for (int i = 0; i < names.Length; i++)
         {
@@ -91,16 +93,14 @@ public class Midterm_ArenaTournament : MonoBehaviour
             Debug.Log("Health: " + health[i]);
             Debug.Log("Armor Class: " + armorClass[i]);
             Debug.Log("Attack Proficiency: " + attackProficiency[i]);
-            Debug.Log("Attack Srength: " + attackStrength[i]);
+            Debug.Log("Attack Strength: " + attackStrength[i]);
             Debug.Log("Attack Frequency: " + attackFrequency[i]);
         }
     }
-        // TODO: Run the tournament.
-        //   Keep taking turns while more than one fighter is alive. On each
-        //   turn, let every living fighter act on its scheduled turns and
-        //   attack a random living opponent. When one fighter remains,
-        //   announce the winner.
-    }
+    
+    
+    
+   
 
     /// <summary>
     /// Output every fighter's name and all of their stats to the console.
@@ -112,22 +112,82 @@ public class Midterm_ArenaTournament : MonoBehaviour
     /// Attack Strength: 8
     /// Attack Frequency: 2
     /// </summary>
-    void PrintRoster()
-    {
-
-    }
+   
 
     /// <summary>
     /// Returns a single roll of a 20-sided die (a whole number from 1 to 20).
     /// </summary>
     /// <returns></returns>
-    int RollD20()
+    int RollD20(int attackerIndex)
     {
-        return Random.Range(1,21);
+        int roll = Random.Range(1, 21);
+        return roll + attackProficiency[attackerIndex];
+        
+    }
     
+        // TODO: Run the tournament.
+        //   Keep taking turns while more than one fighter is alive. On each
+        //   turn, let every living fighter act on its scheduled turns and
+        //   attack a random living opponent. When one fighter remains,
+        //   announce the winner.
+    void RunTournament()
+    {
+    
+    int CountAlive()
+    {
+    int count = 0;
+
+    for (int i = 0; i < health.Length; i++)
+    {
+        if (health[i] > 0)
+        {
+            count++;
+        }
     }
 
+    return count;
+    }        
+    int turn = 0;
+    while (CountAlive() > 1)
+    {
+        turn++;
+        Debug.Log ("Turn: " + turn);
 
+        for (int i = 0; i < names.Length; i ++)
+        {
+            if (health[i] <= 0)
+        
+                continue;
+            
+        if (turn % attackFrequency[i] != 0)
+            {
+                continue;
+            }
+            
+
+    
+    int roll = RollD20();
+        
+    int attackRoll = roll + attackProficiency[i];
+    int targetIndex = ChooseTarget(i);
+    Debug.Log(names[i] +" rolls " + attackRoll + " against " + names[targetIndex]);
+        
+     if (health[targetIndex] <=0)
+         {
+            health[targetIndex] = 0;
+            Debug.Log(names[targetIndex] + " has been knocked out!!");
+         }
+        else
+         {
+            Debug.Log(names[i] + "missed!");
+         }
+         
+         {
+            Debug.Log("The winner of the tournament is " + names[i] + "!");
+         }
+    }
+    
+    
     /// <summary>
     /// Returns the damage for an attack (does not account for critical hits)
     /// </summary>
@@ -137,6 +197,8 @@ public class Midterm_ArenaTournament : MonoBehaviour
     {
         return attackStrength[attackerIndex];
     }
+
+
     
 
     /// <summary>
